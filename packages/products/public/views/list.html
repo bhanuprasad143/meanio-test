@@ -5,7 +5,7 @@
   <div class="products row">
     <div class='col-md-6 product' data-ng-repeat="product in products">
       <div class='thumbnail'>
-        <img class='img-responsive' src="{{product.image}}">
+        <img class='img-responsive' src="{{product.image}}" title="{{product.name}}: {{product.description}}">
         <div class='caption'>
           <h2>
             <a data-ng-href="#!/products/{{product._id}}">{{product.name}}</a>
@@ -18,8 +18,7 @@
               </a>
             </span>
           </h2>
-          <span>{{product.created | date:'medium'}}</span>
-          <div>{{product.description}}</div>
+          <div class='strong'>${{(product.price_in_cents/100).toFixed(2)}}</div>
           <button class='btn btn-success' data-ng-click="addItem(product)">ADD TO CART</button>
           
         </div>        

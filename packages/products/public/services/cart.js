@@ -13,7 +13,6 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
 	  				count += item.quantity;
   				}
   			});
-  			console.log(count);
   			return count;
   		},
   		total: function(){
@@ -22,10 +21,9 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
   			$this.loadItems();
   			angular.forEach($this.items, function(item, key){
   				if(item && item.quantity){
-	  				total += (item.price * item.quantity)/100;
+	  				total += (item.price_in_cents * item.quantity)/100;
   				}
   			});
-  			console.log(total);
   			return total;
   		},
 	  	addItem: function(product){
@@ -36,8 +34,9 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
 	  		}else{
 	  			$this.items[product._id] = {
 	  				productId: product._id,
+	  				image: product.image,
 	  				name: product.name,
-	  				price: product.price,
+	  				price_in_cents: product.price_in_cents,
 	  				quantity: 1
 	  			};
 	  		}

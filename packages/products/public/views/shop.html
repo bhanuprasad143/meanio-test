@@ -12,8 +12,14 @@
 			<table class='table'>
 				<tbody>
 					<tr data-ng-repeat="(key, item) in shoppingCart.items" >
-						<td>{{ item.name }}</td>
-						<td>{{ item.quantity }}</td>
+						<td class='col-md-6'>
+							<img class="img-responsive" src="{{item.image}}" title="{{item.name}}"/>
+						</td>
+						<td>
+							<strong>{{item.name}}</strong>
+							<br/>
+							${{(item.price_in_cents/100.0).toFixed(2)}} x {{ item.quantity }}
+						</td>
 					</tr>
 				</tbody>
 				<tr>
