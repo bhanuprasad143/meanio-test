@@ -8,9 +8,12 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
   			var $this = this;
   			$this.loadItems();
   			var count = 0;
-  			angular.forEach($this.items, function(item){
-  				count += item.quantity;
+  			angular.forEach($this.items, function(item, key){
+  				if(item && item.quantity){
+	  				count += item.quantity;
+  				}
   			});
+  			console.log(count);
   			return count;
   		},
   		total: function(){
@@ -53,14 +56,18 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
 	  		console.log('loadItems');
 	  		var $this = this;
 	  		var items = null;
-	  		if(localStorage !== null) {
-	  			items = localStorage.cartItems;
-	  		}
-	  		if (items !== null && JSON !== null){
-	  			$this.items = JSON.parse(items);
-	  		}else{
-	  			$this.items = {};
-	  		}
+	  		try{
+		  		if(localStorage !== null) {
+		  			items = localStorage.cartItems;
+		  		}
+		  		if (items !== null && JSON !== null){
+		  			$this.items = JSON.parse(items);
+		  		}else{
+		  			$this.items = {};
+		  		}
+		  	}catch(e){
+		  		$this.items = {};
+		  	}
 	  	},
 	  	storeCart: function(){
 	  		console.log('storeCart');

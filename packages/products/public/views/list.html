@@ -3,9 +3,9 @@
 </div>
 <section data-ng-controller="ProductsController" data-ng-init="find()">
   <div class="products row">
-    <div class='col-md-6' data-ng-repeat="product in products">
+    <div class='col-md-6 product' data-ng-repeat="product in products">
       <div class='thumbnail'>
-        <img data-src="holder.js/300x300" alt="...">
+        <img class='img-responsive' src="{{product.image}}">
         <div class='caption'>
           <h2>
             <a data-ng-href="#!/products/{{product._id}}">{{product.name}}</a>

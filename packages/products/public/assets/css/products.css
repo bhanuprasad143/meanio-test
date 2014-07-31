@@ -23,3 +23,6 @@
 	z-index: 555555;
 	position: fixed;
 }
+.products .product .caption{
+	text-align: center;
+}

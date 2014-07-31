@@ -14,6 +14,7 @@ angular.module('mean.products').controller('ProductsController',
       if (isValid) {
         var product = new Products({
           name: this.name,
+          price_in_cents: this.price_in_cents,
           description: this.description
         });
         product.$save(function(response) {

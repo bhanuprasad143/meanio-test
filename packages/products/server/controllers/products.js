@@ -27,7 +27,6 @@ exports.create = function(req, res) {
   console.log(req.body);
   var product = new Product(req.body);
   // product.user = req.user;
-
   product.save(function(err) {
     if (err) {
       console.log(err);

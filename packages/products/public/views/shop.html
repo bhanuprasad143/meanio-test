@@ -1,6 +1,6 @@
 <div class="shopnav" data-ng-controller="CartController">
 
-	<i class='glyphicon glyphicon-shopping-cart' title='View Cart' data-ng-click="toogleCartPanel()">{{shoppingCart.count()}} items</i>
+	<i class='glyphicon glyphicon-shopping-cart' title='View Cart' data-ng-click="toogleCartPanel()">	{{shoppingCart.count()}} items</i>
 
 	<div class='style-switcher panel panel-success' data-ng-hide="!shown" id="cartPanel">
 		<div class='panel-heading'>
@@ -19,8 +19,9 @@
 				<tr>
 					<td colspan='2'>
 						<span class='pull-right'>
-							Total:
 							${{shoppingCart.total()}}
+							for
+							{{shoppingCart.count()}} items
 						</span>
 					</td>
 				</tr>
@@ -28,6 +29,8 @@
 		</div>
 
 		<div class='panel-footer'>
+			<a href="" class='btn btn-primary'> VIEW </a> 
+			<a href="" class='btn btn-success'> CHECKOUT </a> 
 		</div>
 	</div>
 </div>
