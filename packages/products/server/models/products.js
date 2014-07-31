@@ -66,9 +66,9 @@ ProductSchema.statics.load = function(id, cb) {
   }).exec(cb);
 };
 
-// ProductSchema.methods.getPrice = function(){
-//   return (this.price_in_cents/100.0).toFixed(2);
-// };
+ProductSchema.methods.price = function(){
+  return (this.price_in_cents/100.0).toFixed(2);
+};
 // ProductSchema.methods.setPrice = function(){
 //   return this.price*100.0;
 // };

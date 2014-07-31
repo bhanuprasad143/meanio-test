@@ -25,12 +25,12 @@
 
     </div>
 
-    <div class="form-group" ng-class="{ 'has-error' : submitted && productForm.price_in_cents.$invalid }">
-      <label mean-token="'create-price_in_cents'" for="price_in_cents" class="col-md-3 control-label">Price</label>
+    <div class="form-group" ng-class="{ 'has-error' : submitted && productForm.price.$invalid }">
+      <label mean-token="'create-price'" for="price" class="col-md-3 control-label">Price</label>
       <div class="col-md-9">
-        <input name="price_in_cents" type="number" class="form-control" data-ng-model="price_in_cents" id="price_in_cents" placeholder="Price In Cents" required min='1'>
-        <div ng-show="submitted && productForm.price_in_cents.$invalid" class="help-block">
-          <p ng-show="productForm.price_in_cents.$error.required">Price is required</p>
+        <input name="price" type="number" class="form-control" data-ng-model="price" id="price" placeholder="Price" required min='1'>
+        <div ng-show="submitted && productForm.price.$invalid" class="help-block">
+          <p ng-show="productForm.price.$error.required">Price is required</p>
         </div>
       </div>
     </div>

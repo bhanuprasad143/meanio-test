@@ -17,7 +17,16 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
   			return count;
   		},
   		total: function(){
-  			return 0;
+  			var total = 0;
+  			var $this = this;
+  			$this.loadItems();
+  			angular.forEach($this.items, function(item, key){
+  				if(item && item.quantity){
+	  				total += (item.price * item.quantity)/100;
+  				}
+  			});
+  			console.log(total);
+  			return total;
   		},
 	  	addItem: function(product){
 	  		var $this = this;
@@ -28,6 +37,7 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
 	  			$this.items[product._id] = {
 	  				productId: product._id,
 	  				name: product.name,
+	  				price: product.price,
 	  				quantity: 1
 	  			};
 	  		}
