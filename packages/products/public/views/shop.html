@@ -1,8 +1,33 @@
 <div class="shopnav" data-ng-controller="CartController">
 
-	<i class='glyphicon glyphicon-shopping-cart' title='Shopping Cart'>{{shoppingCart.count()}} items</i>
+	<i class='glyphicon glyphicon-shopping-cart' title='View Cart' data-ng-click="toogleCartPanel()">{{shoppingCart.count()}} items</i>
 
-	<div class='style-switcher' id="cartPanel">
-		
+	<div class='style-switcher panel panel-success' data-ng-hide="!shown" id="cartPanel">
+		<div class='panel-heading'>
+			<span>CART</span>
+			<a class='close' title="Close" data-ng-click="toogleCartPanel()">X</a>
+		</div>
+
+		<div class='panel-body'>
+			<table class='table'>
+				<tbody>
+					<tr data-ng-repeat="(key, item) in shoppingCart.items" >
+						<td>{{ item.name }}</td>
+						<td>{{ item.quantity }}</td>
+					</tr>
+				</tbody>
+				<tr>
+					<td colspan='2'>
+						<span class='pull-right'>
+							Total:
+							${{shoppingCart.total()}}
+						</span>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class='panel-footer'>
+		</div>
 	</div>
 </div>
