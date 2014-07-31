@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('mean.products').factory('shoppingCart', ['$resource',
-  function($resource) {
+angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
+  function($resource, Items) {
   	var cart = {
   		loaded: false,
   		items: {},
@@ -33,6 +33,7 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
 	  		if($this.items[product._id]){
 	  			$this.items[product._id].quantity += 1;
 	  		}else{
+	  			console.log(Items);
 	  			$this.items[product._id] = {
 	  				id: product._id,
 	  				productId: product._id,
@@ -67,7 +68,7 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
 	  		var $this = this;
 	  		var items = null;
 	  		if(!$this.loaded){
-	  			$this.loaded = true
+	  			$this.loaded = true;
 		  		console.log('loadItems');
 		  		try{
 			  		if(localStorage !== null) {

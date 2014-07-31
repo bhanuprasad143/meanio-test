@@ -34,9 +34,15 @@ angular.module('mean.products').controller('CartController',
     };
 
     $scope.removeItem = function(item){
-      shoppingCart.removeItem(item);
+      if(confirm("Are you sure you wanna remove this item?")){
+        shoppingCart.removeItem(item);
+      }
     };
 
+    
+    $scope.goCheckout = function(){
+      
+    };
 
   }
 ]);    
