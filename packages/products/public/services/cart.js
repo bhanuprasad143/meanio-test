@@ -3,6 +3,7 @@
 angular.module('mean.products').factory('shoppingCart', ['$resource',
   function($resource) {
   	var cart = {
+  		loaded: false,
   		items: {},
   		count: function(){
   			var $this = this;
@@ -33,6 +34,7 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
 	  			$this.items[product._id].quantity += 1;
 	  		}else{
 	  			$this.items[product._id] = {
+	  				id: product._id,
 	  				productId: product._id,
 	  				image: product.image,
 	  				name: product.name,
@@ -43,43 +45,45 @@ angular.module('mean.products').factory('shoppingCart', ['$resource',
 	  		console.log($this.items);
 	  		$this.storeCart();
 	  	},
-	  	removeItem: function(product){
+	  	removeItem: function(item){
 	  		console.log('removeItem');
 	  		var $this = this;
 	  		$this.loadItems();
-	  		if($this.items[product._id]){
-	  			delete($this.items[product._id]);
+	  		if($this.items[item.id]){
+	  			delete($this.items[item.id]);
 	  		}
 	  		$this.storeCart();
 	  	},
-	  	updateItem: function(product, quantity){
+	  	updateItem: function(item, quantity){
 	  		console.log('updateItem');
 	  		var $this = this;
 	  		$this.loadItems();
-	  		if($this.items[product._id]){
-	  			$this.items[product._id] = quantity;
+	  		if($this.items[item.id]){
+	  			$this.items[item.id] = quantity;
 	  		}
 	  		$this.storeCart();
 	  	},
 	  	loadItems: function(){
-	  		console.log('loadItems');
 	  		var $this = this;
 	  		var items = null;
-	  		try{
-		  		if(localStorage !== null) {
-		  			items = localStorage.cartItems;
-		  		}
-		  		if (items !== null && JSON !== null){
-		  			$this.items = JSON.parse(items);
-		  		}else{
-		  			$this.items = {};
-		  		}
-		  	}catch(e){
-		  		$this.items = {};
-		  	}
+	  		if(!$this.loaded){
+	  			$this.loaded = true
+		  		console.log('loadItems');
+		  		try{
+			  		if(localStorage !== null) {
+			  			items = localStorage.cartItems;
+			  		}
+			  		if (items !== null && JSON !== null){
+			  			$this.items = JSON.parse(items);
+			  		}else{
+			  			$this.items = {};
+			  		}
+			  	}catch(e){
+			  		$this.items = {};
+			  	}
+			  }
 	  	},
 	  	storeCart: function(){
-	  		console.log('storeCart');
 	  		var $this = this;
 	  		localStorage.cartItems = JSON.stringify($this.items);
 	  	}
