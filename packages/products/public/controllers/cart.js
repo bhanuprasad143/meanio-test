@@ -34,7 +34,7 @@ angular.module('mean.products').controller('CartController',
     };
 
     $scope.removeItem = function(item){
-      if(confirm("Are you sure you wanna remove this item?")){
+      if(confirm('Are you sure you wanna remove this item?')){
         shoppingCart.removeItem(item);
       }
     };

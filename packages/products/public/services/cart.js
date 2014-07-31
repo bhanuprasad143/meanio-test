@@ -29,11 +29,11 @@ angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
   		},
 	  	addItem: function(product){
 	  		var $this = this;
+  			console.log('addItem');
 	  		$this.loadItems();
 	  		if($this.items[product._id]){
 	  			$this.items[product._id].quantity += 1;
 	  		}else{
-	  			console.log(Items);
 	  			$this.items[product._id] = {
 	  				id: product._id,
 	  				productId: product._id,
@@ -43,6 +43,14 @@ angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
 	  				quantity: 1
 	  			};
 	  		}
+  			// var item = new Items({
+  			// 	product: product._id,
+  			// 	quantity: $this.items[product._id].quantity
+  			// });
+  			// item.$save(function(response) {
+  			// 	console.log(response);
+     //    });
+
 	  		console.log($this.items);
 	  		$this.storeCart();
 	  	},
