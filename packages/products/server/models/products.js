@@ -8,7 +8,7 @@ var mongoose = require('mongoose'),
 
 
 /**
- * Article Schema
+ * Product Schema
  */
 var ProductSchema = new Schema({
   created: {
@@ -30,17 +30,21 @@ var ProductSchema = new Schema({
 /**
  * Validations
  */
-ProductSchema.path('name').validate(function(title) {
-  return !!title;
+ProductSchema.path('name').validate(function(name) {
+  return !!name;
 }, 'Name cannot be blank');
 
-ProductSchema.path('description').validate(function(content) {
-  return !!content;
+ProductSchema.path('description').validate(function(description) {
+  return !!description;
 }, 'Description cannot be blank');
 
 /**
  * Statics
  */
-
+ProductSchema.statics.load = function(id, cb) {
+  this.findOne({
+    _id: id
+  }).exec(cb);
+};
 
 mongoose.model('Product', ProductSchema);

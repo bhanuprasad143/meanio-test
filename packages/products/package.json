@@ -1,7 +1,7 @@
 {
-  "name": "product",
+  "name": "products",
   "version": "0.0.1",
-  "description": "Some description of product",
+  "description": "Some description of products",
   "author": {
     "name": "mean scaffold"
   },

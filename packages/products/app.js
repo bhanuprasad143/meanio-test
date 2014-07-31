@@ -5,30 +5,30 @@
  */
 var Module = require('meanio').Module;
 
-var Product = new Module('product');
+var Products = new Module('products');
 
 /*
  * All MEAN packages require registration
  * Dependency injection is used to define required modules
  */
-Product.register(function(app, auth, database) {
+Products.register(function(app, auth, database) {
 
   //We enable routing. By default the Package Object is passed to the routes
-  Product.routes(app, auth, database);
+  Products.routes(app, auth, database);
 
   //We are adding a link to the main menu for all authenticated users
-  Product.menus.add({
+  Products.menus.add({
     title: 'Products',
-    link: 'products-page',
+    link: 'all-products',
     roles: ['authenticated'],
     menu: 'main'
   });
-
+  Products.aggregateAsset('css','products.css');
   /**
     //Uncomment to use. Requires meanio@0.3.7 or above
     // Save settings with callback
     // Use this for saving data from administration pages
-    Product.settings({
+    Products.settings({
         'someSetting': 'some value'
     }, function(err, settings) {
         //you now have the settings object
@@ -36,15 +36,15 @@ Product.register(function(app, auth, database) {
 
     // Another save settings example this time with no callback
     // This writes over the last settings.
-    Product.settings({
+    Products.settings({
         'anotherSettings': 'some value'
     });
 
     // Get settings. Retrieves latest saved settigns
-    Product.settings(function(err, settings) {
+    Products.settings(function(err, settings) {
         //you now have the settings object
     });
     */
 
-  return Product;
+  return Products;
 });
