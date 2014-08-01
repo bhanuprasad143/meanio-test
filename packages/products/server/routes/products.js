@@ -22,7 +22,11 @@ module.exports = function(Products, app, auth) {
 
   app.route('/items')
     .get(carts.all)
-    .post(auth.requiresLogin, carts.currentCart, carts.addProduct);
+    .post(auth.requiresLogin, carts.currentCart, carts.addItem)
+    .put(auth.requiresLogin, carts.currentCart, carts.updateItem)
+    .delete(auth.requiresLogin, carts.currentCart, carts.removeItem);
+  app.route('/cart')
+    .delete(auth.requiresLogin, carts.currentCart, carts.clearCart);
 
   // Finish with setting up the productId param
   app.param('productId', products.product);
