@@ -15,6 +15,9 @@ var OrderSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  name: {
+    type: String
+  },
   user: {
     type: Schema.ObjectId,
     ref: 'User'

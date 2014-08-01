@@ -4,7 +4,7 @@ angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
   function($resource, Items) {
   	var cart = {
   		loaded: false,
-  		items: {},
+  		items: Items.query(),
   		count: function(){
   			var $this = this;
   			$this.loadItems();
@@ -30,28 +30,38 @@ angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
 	  	addItem: function(product){
 	  		var $this = this;
   			console.log('addItem');
-	  		$this.loadItems();
-	  		if($this.items[product._id]){
-	  			$this.items[product._id].quantity += 1;
-	  		}else{
-	  			$this.items[product._id] = {
-	  				id: product._id,
-	  				productId: product._id,
-	  				image: product.image,
-	  				name: product.name,
-	  				price_in_cents: product.price_in_cents,
-	  				quantity: 1
-	  			};
-	  		}
-  			// var item = new Items({
-  			// 	product: product._id,
-  			// 	quantity: $this.items[product._id].quantity
-  			// });
-  			// item.$save(function(response) {
-  			// 	console.log(response);
-     //    });
+	  		// $this.loadItems();
+	  		// console.log(product);
+	  		// // if($this.items[product._id]){
+	  		// // 	$this.items[product._id].quantity += 1;
+	  		// // }else{
+	  		// // 	$this.items[product._id] = {
+	  		// // 		id: product._id,
+	  		// // 		productId: product._id,
+	  		// // 		image: product.image,
+	  		// // 		name: product.name,
+	  		// // 		price_in_cents: product.price_in_cents,
+	  		// // 		quantity: 1
+	  		// // 	};
+	  		// // }
+	  		Items.get({itemId: product._id}, function(resp){
+	  			if(resp){
+		  			console.log(resp);
+		  			resp.quantity += 1;
+		  			resp.$update();
+	  			}else{
+		  			var item = new Items({
+		  				product: product._id,
+		  				quantity: 1
+		  			});
+		  			item.$save(function(response) {
+							$this.items.push(response)		        
+		        });
 
-	  		console.log($this.items);
+	  			}
+
+	  		});
+
 	  		$this.storeCart();
 	  	},
 	  	removeItem: function(item){
@@ -78,18 +88,6 @@ angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
 	  		if(!$this.loaded){
 	  			$this.loaded = true;
 		  		console.log('loadItems');
-		  		try{
-			  		if(localStorage !== null) {
-			  			items = localStorage.cartItems;
-			  		}
-			  		if (items !== null && JSON !== null){
-			  			$this.items = JSON.parse(items);
-			  		}else{
-			  			$this.items = {};
-			  		}
-			  	}catch(e){
-			  		$this.items = {};
-			  	}
 			  }
 	  	},
 	  	storeCart: function(){

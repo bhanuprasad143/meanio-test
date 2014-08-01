@@ -5,7 +5,7 @@
  */
 var mongoose = require('mongoose'),
   Product = mongoose.model('Product'),
-  // Order = mongoose.model('Order'),
+  Order = mongoose.model('Order'),
   Item = mongoose.model('Item'),
   _ = require('lodash');
 
@@ -34,12 +34,21 @@ exports.item = function(req, res, next, id) {
 exports.currentCart = function(req, res, next) {
     // we should not store temp cart in db, that would be redundant
     // currentCart should store all cart in session, it will be remove in short time
-    if (!req.session.cart) { 
-      req.session.cart = {
-          items: {},
-          count: 0,
-          total: 0
-      };
+    // delete(req.session.currentCart);
+    // req.session.currentCart = null;
+    if (!req.session.cartId) { 
+        var currentCart = new Order();
+        currentCart.user = req.user;
+        currentCart.name = req.user.name;
+        currentCart.save(function(err, resp){
+            if(err){
+                console.log(err);
+                return null;
+            }
+            console.log("req.session.currentCart");
+            console.log(resp._id);
+            req.session.cartId = resp._id;
+        });
     }
     next();
 };
@@ -49,51 +58,66 @@ exports.addItem = function(req, res){
     console.log('addItem......');
     try{
         var productId = req.body.product;
-        Product.findOne(productId, function(err, product){
+        console.log(productId);
+        Item.findOne({product: productId, order: req.session.cartId}, function(err, item){
             if(err){
                 console.log(err);
                 return false;
             }
-            var item = req.session.cart.items[productId];
-            // add item if not existed
-            if(!item){
-                item = {
-                    id: product._id,
-                    name: product.name,
-                    image: product.image,
-                    price_in_cents: product.price_in_cents,
-                    quantity: 1
-                };
-            }else{
-                // increment if existed
+            if(item){
                 item.quantity += 1;
+                item.save();
+                res.json(item);
+                return true;
             }
-            // re-fill to cart
-            req.session.cart.items[productId] = item;
-
-            // calc cache cart
-            // _.each(req.session.cart.items, function (itm) {
-            //     req.session.cart.count = req.session.cart.count + itm.quantity;
-            //     req.session.cart.total = req.session.cart.total + (itm.price * itm.quantity);
-            // });
-
-            calcCartCaching(req,res);
-    
-            // we could sync angularjs cart and express cart
-            // by response to whole things on cart
-            // but that must be bulk traffic
-            // so we only send what was changed
-            res.json(item);
+            Product.findOne({_id: productId}, function(err, product){
+                if(err){
+                    console.log(err);
+                    return false;
+                }
+                if(!product){
+                    console.log('not found product');
+                    return false;
+                }
+                var newItem = new Item({
+                    product: product,
+                    order: req.session.cartId,
+                    quantity: 1
+                });
+                console.log('req.session.currentCart');
+                console.log(req.session);
+                newItem.save(function(err2, itm){
+                    if(err2){
+                        console.log(err2);
+                        return false;
+                    }
+                    res.json(newItem);
+                });
+            });
 
         });
+
+     
     }catch(err){
         console.log(err);
     }
 };
 
+exports.showItem = function(req, res){
+    console.log('showItem..........');
+    console.log(req.params);
+    Item.findOne({$or: [{_id: req.params.itemId}, {product: req.params.itemId}]}).populate('product', 'name image price_in_cents').exec(function(err, item){
+        if(err || !item){
+            console.log('not found');
+            return false;
+        }
+        res.json(item);
+    });
+};
+
 exports.updateItem = function(req, res){
     console.log('updateItem......');
-    var item = req.session.cart.items[req.body.product];
+    var item = req.session.cart.items[req.params.itemId];
     if(!item){
         console.log('ERROR: item is not existed!');
         return false;
@@ -125,89 +149,9 @@ exports.clearCart = function(req, res){
 
 exports.all = function(req, res){
     console.log('alll.......');
-    res.json(_.values(req.session.cart.items));
+    Item.find({order: req.session.cartId}).sort('-created').populate("product", 'name image price_in_cents').exec(function(err, items){
+        res.json(items);
+    });
 };
 
-// exports.create = function(){
-//     console.log('creating......');
-// };
-
-// // Add product to cart
-// exports.addProduct = function(req, res) {
-//     try {
-//     // Get product from database for given id
-//     Product.findOne(req.body.product, function(err, product) { 
-//         if (err) {
-//             console.log(err);
-//             return false;
-//         }
-        
-        
-//         // Check if product already in cart
-//         if (!req.session.cart.products[req.body.product]) {
-        
-//             // Add product if not
-//             req.session.cart.products[req.body.product] = {
-//                 id: product.id,
-//                 name: product.name,
-//                 price_in_cents: product.price_in_cents,
-//                 quantity: 1  
-//             };
-        
-//         } else {
-        
-//             // Increment count if already added
-//             req.session.cart.products[req.body.product].quantity = req.session.cart.products[req.body.product].quantity + 1;
-//         }
-        
-//         // Total cart
-//         req.session.cart.count = 0;
-//         req.session.cart.total = 0;
-//         _.each(req.session.cart.products, function (product) {
-//             req.session.cart.count = req.session.cart.count + product.quantity;
-//             req.session.cart.total = req.session.cart.total + (product.price * product.quantity);
-//         });
-//         res.json(req.session.cart);
-//         // Respond with rendered cart
-    
-//     });
-//     } catch(err) {
-//         console.log(err);
-//     }
-// };
-
-// // Remove product from cart
-// exports.remProduct = function(req, res) {
-        
-//     // Check item count
-//     if (req.session.cart.products[req.body.product].quantity > 1) {
-
-//         // Reduce count if already added
-//         req.session.cart.products[req.body.product].quantity = req.session.cart.products[req.body.product].quantity - 1;
-        
-//     } else {
-        
-//         // Remove product 
-//         delete req.session.cart.products[req.body.product];
-        
-//     }
-
-//     // Total cart
-//     req.session.cart.count = 0;
-//     req.session.cart.total = 0;
-//     _.each(req.session.cart.products, function (product) {
-//         req.session.cart.count = req.session.cart.count + product.quantity;
-//         req.session.cart.total = req.session.cart.total + (product.price * product.quantity);
-//     });
-
-//     // Remove cart if empty
-//     if (req.session.cart.count === 0) {
-//         delete req.session.cart;
-//         res.render('cart', {cart: undefined});
-//     } 
-
-//     // Respond with rendered cart
-//     res.render('cart/cart', {cart: req.session.cart});
-
-// };
 

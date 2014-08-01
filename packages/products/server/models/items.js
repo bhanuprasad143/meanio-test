@@ -49,7 +49,7 @@ ItemSchema.path('quantity').validate(function(quantity) {
 ItemSchema.statics.load = function(id, cb) {
   this.findOne({
     _id: id
-  }).populate('product', 'name').exec(cb);
+  }).populate('product', 'name price_in_cents image').exec(cb);
 };
 
 mongoose.model('Item', ItemSchema);

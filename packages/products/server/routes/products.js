@@ -22,7 +22,10 @@ module.exports = function(Products, app, auth) {
 
   app.route('/items')
     .get(carts.all)
-    .post(auth.requiresLogin, carts.currentCart, carts.addItem)
+    .post(auth.requiresLogin, carts.currentCart, carts.addItem);
+  app.route('/items/:itemId')
+    .get(auth.requiresLogin, carts.currentCart, carts.showItem);
+  app.route('/items/:itemId')
     .put(auth.requiresLogin, carts.currentCart, carts.updateItem)
     .delete(auth.requiresLogin, carts.currentCart, carts.removeItem);
   app.route('/cart')
@@ -30,6 +33,6 @@ module.exports = function(Products, app, auth) {
 
   // Finish with setting up the productId param
   app.param('productId', products.product);
-  app.param('itemId', carts.item);
+  // app.param('itemId', carts.item);
 
 };
