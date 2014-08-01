@@ -6,18 +6,9 @@
 var mongoose = require('mongoose'),
   Product = mongoose.model('Product'),
   Order = mongoose.model('Order'),
-  Item = mongoose.model('Item'),
-  _ = require('lodash');
+  Item = mongoose.model('Item');
+  // _ = require('lodash');
 
-// helper
-// cache cart counter and calculator
-function calcCartCaching(req, res){
-    _.each(req.session.cart.items, function (itm) {
-        req.session.cart.count = req.session.cart.count + itm.quantity;
-        req.session.cart.total = req.session.cart.total + (itm.price * itm.quantity);
-    });
-
-}
 /**
  * Find item by id
  */
@@ -45,7 +36,7 @@ exports.currentCart = function(req, res, next) {
                 console.log(err);
                 return null;
             }
-            console.log("req.session.currentCart");
+            console.log('req.session.currentCart');
             console.log(resp._id);
             req.session.cartId = resp._id;
         });
@@ -117,27 +108,36 @@ exports.showItem = function(req, res){
 
 exports.updateItem = function(req, res){
     console.log('updateItem......');
-    var item = req.session.cart.items[req.params.itemId];
-    if(!item){
-        console.log('ERROR: item is not existed!');
-        return false;
-    }
-    item.quantity = req.body.quantity;
-    req.session.cart.items[req.body.product] = item;
-    calcCartCaching(req, res);
-    res.json(item);
+    console.log(req.body);
+    Item.findOne({$or: [{_id: req.body._id}, {product: req.body._id}]}).populate('product', 'name image price_in_cents').exec(function(err, item){
+        if(err || !item){
+            console.log('ERROR: item is not existed!');
+            return false;
+        }
+        item.quantity = req.body.quantity;
+        item.save();
+        res.json(item);
+    });
 };
 
 exports.removeItem = function(req, res){
     console.log('removeItem.......');
-    var item = req.session.cart.items[req.body.product];
-    if(!item){
-        console.log('ERROR: item is not existed!');
-        return false;
-    }
-    delete(req.session.cart[req.body.product]);
-    calcCartCaching(req, res);
-    res.json(true);
+    console.log(req.params);
+    Item.findOne({$or: [{_id: req.params.itemId}, {product: req.params.itemId}]}).populate('product', 'name image price_in_cents').exec(function(err, item){
+        if(err || !item){
+            console.log('ERROR: item is not existed!');
+            return false;
+        }
+        item.remove(function(err){
+            if (err) {
+              return res.json(500, {
+                error: 'Cannot delete the article'
+              });
+            }
+            res.json(item);
+
+        });
+    });
 };
 
 
@@ -149,7 +149,7 @@ exports.clearCart = function(req, res){
 
 exports.all = function(req, res){
     console.log('alll.......');
-    Item.find({order: req.session.cartId}).sort('-created').populate("product", 'name image price_in_cents').exec(function(err, items){
+    Item.find({order: req.session.cartId}).sort('-created').populate('product', 'name image price_in_cents').exec(function(err, items){
         res.json(items);
     });
 };

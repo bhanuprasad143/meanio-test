@@ -4,16 +4,16 @@ angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
   function($resource, Items) {
   	var cart = {
   		loaded: false,
-  		items: Items.query(),
+  		items: [],
   		count: function(){
   			var $this = this;
-  			$this.loadItems();
   			var count = 0;
-  			angular.forEach($this.items, function(item, key){
+  			for(var i in $this.items){
+  				var item = $this.items[i];
   				if(item && item.quantity){
-	  				count += item.quantity;
+  					count += item.quantity;
   				}
-  			});
+  			}
   			return count;
   		},
   		total: function(){
@@ -29,70 +29,77 @@ angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
   		},
 	  	addItem: function(product){
 	  		var $this = this;
-  			console.log('addItem');
-	  		// $this.loadItems();
-	  		// console.log(product);
-	  		// // if($this.items[product._id]){
-	  		// // 	$this.items[product._id].quantity += 1;
-	  		// // }else{
-	  		// // 	$this.items[product._id] = {
-	  		// // 		id: product._id,
-	  		// // 		productId: product._id,
-	  		// // 		image: product.image,
-	  		// // 		name: product.name,
-	  		// // 		price_in_cents: product.price_in_cents,
-	  		// // 		quantity: 1
-	  		// // 	};
-	  		// // }
-	  		Items.get({itemId: product._id}, function(resp){
-	  			if(resp){
-		  			console.log(resp);
-		  			resp.quantity += 1;
-		  			resp.$update();
-	  			}else{
-		  			var item = new Items({
-		  				product: product._id,
-		  				quantity: 1
-		  			});
-		  			item.$save(function(response) {
-							$this.items.push(response)		        
-		        });
+  			var item = $this.findItem(product._id);
 
-	  			}
+  			if(item){
+	  			console.log('addItem');
+		  		console.log(item.quantity);
+  				item.quantity += 1;
+  				console.log(item.quantity);
 
-	  		});
+  				item.$update();
+  			}else{
+  				console.log('adddddItem......');
+	  			item = new Items({
+	  				product: product._id,
+	  				quantity: 1
+	  			});
+	  			item.$save(function(resp){
+	  				$this.items.push(resp);
+	  			});
+  			}
 
-	  		$this.storeCart();
 	  	},
 	  	removeItem: function(item){
 	  		console.log('removeItem');
 	  		var $this = this;
-	  		$this.loadItems();
-	  		if($this.items[item.id]){
-	  			delete($this.items[item.id]);
+	  		for(var i in $this.items){
+	  			var hold = $this.items[i];
+	  			if(hold._id === item.product._id || (hold.product && hold.product._id===item.product._id || hold.product === item.product._id)){
+	  				var rmItem = $this.items.splice(i,1);
+	  				console.log(rmItem);
+	  				item.$remove();
+	  				break;
+	  			}
 	  		}
-	  		$this.storeCart();
 	  	},
 	  	updateItem: function(item, quantity){
 	  		console.log('updateItem');
-	  		var $this = this;
-	  		$this.loadItems();
-	  		if($this.items[item.id]){
-	  			$this.items[item.id] = quantity;
-	  		}
-	  		$this.storeCart();
+	  		// var $this = this;
+	  		item.quantity = quantity;
+	  		item.$save();
 	  	},
 	  	loadItems: function(){
 	  		var $this = this;
-	  		var items = null;
 	  		if(!$this.loaded){
 	  			$this.loaded = true;
-		  		console.log('loadItems');
+		  		$this.items = [];
+	  			Items.query(function(items){
+	  				angular.forEach(items, function(item){
+	  					$this.items.push(item);
+	  				});
+	  			});
 			  }
 	  	},
-	  	storeCart: function(){
+
+	  	updateCart: function(){
 	  		var $this = this;
-	  		localStorage.cartItems = JSON.stringify($this.items);
+	  		angular.forEach($this.items,function(item){
+	  			item.$update();
+	  		});
+	  	},
+
+	  	findItem: function(productId){
+	  		var $this = this;
+	  		var rtn = null;
+	  		for(var i in $this.items){
+	  			var item = $this.items[i];
+	  			if(item._id === productId || (item.product && item.product._id===productId || item.product === productId)){
+	  				rtn = item;
+	  				break;
+	  			}
+	  		}
+	  		return rtn;
 	  	}
 
   	};

@@ -21,12 +21,12 @@
     </thead>
     <tbody>
       <tr data-ng-repeat="(key, item) in items">
-        <td>{{item.name}}</td>
-        <td>${{(item.price_in_cents/100.0).toFixed(2)}}</td>
+        <td>{{item.product.name}}</td>
+        <td>${{(item.product.price_in_cents/100.0).toFixed(2)}}</td>
         <td>
           <input type="number" min='1' value="{{item.quantity}}" ng-model="item.quantity" ng-change="watchChange()"/>
         </td>
-        <td>${{(item.price_in_cents*item.quantity/100.0).toFixed(2)}}</td>
+        <td>${{(item.product.price_in_cents*item.quantity/100.0).toFixed(2)}}</td>
         <td>
           <a class='btn btn-danger' ng-click="removeItem(item)">REMOVE</a>
         </td>

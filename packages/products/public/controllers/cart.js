@@ -29,7 +29,7 @@ angular.module('mean.products').controller('CartController',
     };
 
     $scope.updateCart = function(){
-      shoppingCart.storeCart();
+      shoppingCart.updateCart();
       $scope.changed = false;
     };
 
