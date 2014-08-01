@@ -22,7 +22,7 @@ angular.module('mean.products').service('shoppingCart', ['$resource', 'Items',
   			$this.loadItems();
   			angular.forEach($this.items, function(item, key){
   				if(item && item.quantity){
-	  				total += (item.price_in_cents * item.quantity)/100;
+	  				total += (item.product.price_in_cents * item.quantity)/100;
   				}
   			});
   			return total;
