@@ -27,7 +27,7 @@ angular.module('mean.system').controller('HeaderController', ['$scope', '$rootSc
     $scope.toggleCollapse = function(){
       console.log($scope.isCollapsed);
       $scope.isCollapsed = ! $scope.isCollapsed;
-    }
+    };
 
     $rootScope.$on('loggedin', function() {
 
