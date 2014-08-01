@@ -50,7 +50,7 @@ exports.addItem = function(req, res){
     try{
         var productId = req.body.product;
         console.log(productId);
-        Item.findOne({product: productId, order: req.session.cartId}, function(err, item){
+        Item.findOne({product: productId, order: req.session.cartId}).populate('product', 'name image price_in_cents').exec(function(err, item){
             if(err){
                 console.log(err);
                 return false;
@@ -82,7 +82,10 @@ exports.addItem = function(req, res){
                         console.log(err2);
                         return false;
                     }
-                    res.json(newItem);
+                    itm.populate('product', 'name image price_in_cents',function(e, rt){
+                        res.json(itm);
+
+                    });
                 });
             });
 
