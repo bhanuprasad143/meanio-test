@@ -26,3 +26,6 @@
 .products .product .caption{
 	text-align: center;
 }
+.navbar-toggle .icon-bar{
+	background-color: #5cb85c;
+}
